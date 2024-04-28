@@ -1,0 +1,20 @@
+# This tasks are designed to be imported by ...
+---
+- name: Retrieve user data from Github
+  ansible.builtin.uri:
+    url: "https://api.github.com/users/{{ github_login }}"
+    method: GET
+    headers:
+      Accept: "application/vnd.github.v3+json"
+  register: user_data
+
+- name: Setup user with external IdP
+  ipauser:
+    ipaadmin_password: SomeADMINpassword
+    name: "{{ github_login }}"
+    first: "{{ user_data.json.name.split()[0] }}"
+    last: "{{ user_data.json.name.split()[1:] | join(' ') }}"
+    userauthtype: idp
+    idp: github_idp
+    idp_user_id: "{{ user_data.json.id }}"
+...

@@ -1,0 +1,20 @@
+---
+- name: Setup external IdP
+  hosts: ipaserver
+  become: false
+  gather_facts: false
+
+  vars:
+    # Configuração da app OAuth do Github
+    github_oauth_app_client_id: "the client id identifier"
+    github_oauth_app_secret: "the secret id"
+
+  tasks:
+  - name: Ensure an external provider for Github is available
+    ipaidp:
+      ipaadmin_password: SomeADMINpassword
+      name: github_idp
+      provider: github
+      client_id: "{{ github_oauth_app_client_id }}"
+      secret: "{{ github_oauth_app_secret }}"
+...
